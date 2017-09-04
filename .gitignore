@@ -1,0 +1,17 @@
+## ignore the dependency modules directory
+node_modules
+
+## ignore the file that is automatically regenerated
+test/conf/*.crt
+test/conf/*.csr
+test/conf/*.key
+
+## ignore the setting files
+.DS_Store
+
+## dust
+npm-debug.log
+
+## ignore gh-pages dir
+gh-pages
+

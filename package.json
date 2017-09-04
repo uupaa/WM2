@@ -1,0 +1,45 @@
+{
+  "name": "wm2",
+  "version": "0.0.1",
+  "description": "Build a JavaScript module for WebApp/2. WM2 implicitly uses HTTP/2 and ES Modules.",
+  "bin": { "wm2": "./cli.js" },
+  "scripts": {
+    "postinstall": "wm2 --init",
+    "create:server:certificate": "cd test/conf; openssl genrsa -out wm2-server.key 2048 && openssl req -new -key wm2-server.key -out wm2-server.csr -subj \"/C=JP/ST=Tokyo/L=Tokyo/CN=localhost\" && openssl x509 -in wm2-server.csr -days 3650 -req -signkey wm2-server.key > wm2-server.crt",
+    "build:image": "docker build -t wm2-nginx .",
+    "remove:image": "docker rmi wm2-nginx",
+    "start": "docker run --name app -d -p 80:80 -p 443:443 -v $(pwd)/app:/usr/share/nginx/html/app:ro wm2-nginx",
+    "stop": "docker stop app; docker rm app",
+    "test": "npm run test:browser && npm run test:node && npm run test:ios && npm run test:el",
+    "test:browser": "wm2 --test=b https://localhost/test/browser.html",
+    "test:node": "node ./test/node.js",
+    "test:ios": "wm2 --test=i https://localhost/test/browser.html",
+    "test:el": "electron ./test/el.js",
+    "bundle": "npm run bundle:es6 && npm run bundle:es5",
+    "bundle:es6": "rollup -c .rollup.es6.js",
+    "bundle:es5": "rollup -c .rollup.es5.js",
+    "watch": "npm run watch:es6 & npm run watch:es5",
+    "watch:es6": "rollup -w -c .rollup.es6.js &",
+    "watch:es5": "rollup -w -c .rollup.es5.js &",
+    "unwatch": "npm run unwatch:es6; npm run unwatch:es5",
+    "unwatch:es6": "killall -- node $(pwd)/node_modules/.bin/rollup -w -c .rollup.es6.js; exit 0",
+    "unwatch:es5": "killall -- node $(pwd)/node_modules/.bin/rollup -w -c .rollup.es5.js; exit 0",
+    "lint": "eslint index.js",
+    "zip": "zip -r wm2.zip . -x 'node_modules/*' '.git/*'"
+  },
+  "es6js": "./app/bundle.es6.js",
+  "devDependencies": {
+    "request": "",
+    "eslint": "^3.19.0",
+    "rollup": "^0.41.6",
+    "rollup-plugin-buble": "^0.15.0",
+    "rollup-plugin-cleanup": "^1.0.0",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-eslint": "^3.0.0",
+    "rollup-plugin-license": "^0.4.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-watch": "^3.2.2",
+    "webapp2-node-tools": ""
+  }
+}
+
